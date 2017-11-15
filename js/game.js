@@ -61,8 +61,8 @@ var map = maps[currerntLevel];
 
 // Game objects
 var hero = {
-  score: 0,
-  inventory: [7, 6],
+  energy: 10,
+  inventory: [],
   x: 0,
   y: 0
 };
@@ -123,19 +123,19 @@ var update = function (modifier) {
 
   if (38 in keysDown && validateMovement(hero.x, hero.y - 1)) { // up
     hero.y -= 1;
-    hero.score -= 1;
+    hero.energy -= 1;
   }
   if (40 in keysDown && validateMovement(hero.x, hero.y + 1)) { // down
     hero.y += 1;
-    hero.score -= 1;
+    hero.energy -= 1;
   }
   if (37 in keysDown && validateMovement(hero.x - 1, hero.y)) { // left
     hero.x -= 1;
-    hero.score -= 1;
+    hero.energy -= 1;
   }
   if (39 in keysDown && validateMovement(hero.x + 1, hero.y)) { // right
     hero.x += 1;
-    hero.score -= 1;
+    hero.energy -= 1;
   }
 
   map[hero.y][hero.x] = 5;
@@ -145,15 +145,16 @@ function validateMovement(x, y) {
   if (map[y][x] === 0 || map[y][x] === 3) {
     return true;
   } else if (map[y][x] === 9) {
-    hero.score += 1;
+    hero.energy += 1;
     return true;
-  } else if (map[y][x] === 4) { //push object
+  } else if (map[y][x] === 4) { 
+    //push object
     if (40 in keysDown) {
       if (map[y + 1][x] === 0) {
         map[y][x] = 0;
         map[y + 1][x] = 4;
         return true;
-        hero.score--;
+        hero.energy--;
       } else {
         return false;
       }
@@ -163,7 +164,7 @@ function validateMovement(x, y) {
       if (map[y - 1][x] === 0) {
         map[y][x] = 0;
         map[y - 1][x] = 4;
-        hero.score--;
+        hero.energy--;
         return true;
       } else {
         return false;
@@ -174,7 +175,7 @@ function validateMovement(x, y) {
       if (map[y][x - 1] === 0) {
         map[y][x] = 0;
         map[y][x - 1] = 4;
-        hero.score--;
+        hero.energy--;
         return true;
       } else {
         return false;
@@ -185,7 +186,7 @@ function validateMovement(x, y) {
       if (map[y][x + 1] === 0) {
         map[y][x] = 0;
         map[y][x + 1] = 4;
-        hero.score--;
+        hero.energy--;
         return true;
       } else {
         return false;
@@ -193,10 +194,11 @@ function validateMovement(x, y) {
     }
 
   } else if (map[y][x] === 6 || map[y][x] === 7) {
-    hero.score += 100;
+    hero.inventory.push(map[y][x]);
+    hero.energy += 100;
     return true;
   } else if (map[y][x] === 8) {
-    hero.score += 1000;
+    hero.energy += 1000;
     currerntLevel++;
     map = maps[currerntLevel];
     return true;
@@ -222,12 +224,12 @@ var render = function () {
     ctx.drawImage(textures[hero.inventory[i]], i * 32 + 320, 0);
   }
 
-  // Score
+  // energy
   ctx.fillStyle = "rgb(200, 200, 200)";
   ctx.font = "20px Helvetica";
   ctx.textAlign = "left";
   ctx.textBaseline = "top";
-  ctx.fillText("Score: " + hero.score, 3, 3);
+  ctx.fillText("Energy: " + hero.energy, 3, 3);
 
   if (loading < 1000) {
     ctx.fillStyle = "rgb(200,0,0)";
