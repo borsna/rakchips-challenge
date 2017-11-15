@@ -1,7 +1,5 @@
 var loading = 0;
 
-var currerntLevel = 0;
-
 var maps = [
   [
     [2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2],
@@ -56,16 +54,17 @@ var maps = [
   ]
 ];
 
-
-var map = maps[currerntLevel];
-
 // Game objects
 var hero = {
   energy: 10,
+  sprite: 5,
+  onMapLevel: 0,
   inventory: [],
   x: 0,
   y: 0
 };
+
+var map = maps[hero.onMapLevel];
 
 var textures = new Array();
 
@@ -79,7 +78,7 @@ for (var i = 0; i < map.length; i++) {
         textures[index].src = "images/map/" + index + ".png";
 
         //set player x,y
-        if (index === 5) {
+        if (index === hero.sprite) {
           hero.x = j;
           hero.y = i;
         }
@@ -87,6 +86,11 @@ for (var i = 0; i < map.length; i++) {
       }
     }
   }
+}
+
+function changeLevel(level){
+  hero.inventory = [];
+  map = maps[level];
 }
 
 // Create the canvas
@@ -138,7 +142,7 @@ var update = function (modifier) {
     hero.energy -= 1;
   }
 
-  map[hero.y][hero.x] = 5;
+  map[hero.y][hero.x] = hero.sprite;
 };
 
 function validateMovement(x, y) {
@@ -199,8 +203,8 @@ function validateMovement(x, y) {
     return true;
   } else if (map[y][x] === 8) {
     hero.energy += 1000;
-    currerntLevel++;
-    map = maps[currerntLevel];
+    hero.onMapLevel++;
+    changeLevel(hero.onMapLevel);
     return true;
   } else {
     return false;
